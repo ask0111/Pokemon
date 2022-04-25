@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pokemon</title>
+    <style>
+        .container-part-1 {
+            width: 100%;
+            font-size: 20px;
+        }
+
+        table {
+            margin: auto;
+            /* border: 1px solid red; */
+            width: 40%;
+            text-align: center;
+
+        }
+
+        table tr th:first-child,
+        table tr td:first-child {
+            border: 1px solid red;
+            width: 10px;
+        }
+
+        table tr th,
+        table tr td {
+            border: 1px solid red;
+            width: 20px;
+        }
+
+
+        .container-part-2 {
+            margin-top: 80px;
+            width: 100%;
+            /* border: 1px solid rebeccapurple; */
+        }
+
+        .container-part-2 form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container-part-2 form input:first-child {
+            font-size: 20px;
+            width: 300px;
+            height: 30px;
+        }
+
+        .container-part-2 form input:last-child {
+            font-size: 20px;
+            height: 34px;
+            width: 80px;
+        }
+        .card-pokemon div{
+            width: 80%;
+            padding: 20px;
+            margin: auto;
+            margin-top: 30px;
+            box-shadow: inset 0 0 2px 2px rgba(111,111,111,.7);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-part-1">
+        <table class="pokemon-names">
+            <tr>
+                <th>
+                    No.
+                </th>
+                <th>
+                    Name
+                </th>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <br>
+
+
+    <div class="container-part-2">
+        <form action="">
+            <input type="text" placeholder="search pokemon" id="search">
+            <input type="submit" value="search" id="btn">
+        </form>
+
+        <div class="card-pokemon">
+
+        </div>
+    </div>
+
+</body>
+<script>
+    var url = "https://pokeapi.co/api/v2/pokemon";
+    var pokemonData = JSON.parse(localStorage.getItem('pokemon'))
+        || fetch(url).then((res) => {
+            res.json().then((res) => {
+                console.log(res);
+                const pokemonData = res.results;
+                console.log(pokemonData);
+                localStorage.setItem('pokemon', JSON.stringify(pokemonData)); // This is new batti
+                display(pokemonData);
+            })
+        }).catch(function (err) {
+            console.log(err, "hare krishna");
+        });
+
+    display(pokemonData);
+
+    function display(pokemonData) {
+        pokemonData.forEach((data, i) => {
+            var tableRow = document.createElement('tr');
+            var tableData1 = document.createElement('td');
+            tableData1.innerText = i + 1;
+            var tableData2 = document.createElement('td');
+            tableData2.innerText = data.name;
+            tableRow.append(tableData1, tableData2)
+            document.querySelector(".pokemon-names").append(tableRow);
+        });
+    }
+
+    function displayPokemon(pokemonData){
+        document.querySelector(".card-pokemon").innerHTML ="";
+        var box = document.createElement('div');
+        var idPara = document.createElement('p');
+        idPara.innerText = `id: ${pokemonData.id}`;
+
+        var namePara = document.createElement('p');
+        namePara.innerText = `name: ${pokemonData.name}`;
+
+        var heightPara = document.createElement('p');
+        heightPara.innerText = `height: ${pokemonData.height}`;
+
+        var weightPara = document.createElement('p');
+        weightPara.innerText = `weight: ${pokemonData.weight}`;
+
+        var abilitiesPara = document.createElement('p');
+        var ans ="";
+        pokemonData.abilities.forEach((el)=>{
+            ans += el.ability.name +", ";
+        })
+        abilitiesPara.innerText = `abilities: ${ans}`;
+
+        var movesPara = document.createElement('p');
+        var move ="";
+        pokemonData.moves.forEach((el)=>{
+            move += el.move.name +", ";
+        })
+        movesPara.innerText = `moves: ${move}`;
+
+        // var namePara = document.createElement('p');
+        console.log(abilitiesPara);
+        box.append(idPara, namePara, heightPara, weightPara, abilitiesPara, movesPara);
+        document.querySelector(".card-pokemon").append(box);
+
+    }
+
+
+    document.querySelector("#btn").addEventListener("click", () => {
+        var input = document.querySelector('#search').value;
+        pokemonData.forEach((el) => {
+            event.preventDefault()
+            if (el.name == input) {
+                fetch(el.url).then((res) => {
+                    res.json().then((res) => {
+                        // console.log(res);
+                        // const pokemonData = res.results;
+                        // console.log(pokemonData);
+                        // localStorage.setItem('pokemon', JSON.stringify(pokemonData)); // This is new batti
+                        displayPokemon(res);
+                    })
+                }).catch(function (err) {
+                    console.log(err, "hare krishna");
+                });
+
+
+            }
+        })
+    })
+
+
+
+</script>
+
+</html>
